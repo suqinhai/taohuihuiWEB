@@ -7,8 +7,7 @@ import 'element-ui/lib/theme-default/index.css'
 import VueRouter from 'vue-router'
 import store from './vuex/store'
 import Vuex from 'vuex'
-//import NProgress from 'nprogress'
-//import 'nprogress/nprogress.css'
+import vueResource from 'vue-resource'
 import routes from './routes'
 import Mock from './mock'
 Mock.bootstrap();
@@ -18,6 +17,7 @@ Vue.use(ElementUI)
 Vue.use(VueRouter)
 Vue.use(Vuex)
 
+Vue.use(vueResource)
 //NProgress.configure({ showSpinner: false });
 
 const router = new VueRouter({

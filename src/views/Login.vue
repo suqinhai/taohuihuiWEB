@@ -23,8 +23,8 @@
       return {
         logining: false,
         ruleForm: {
-          account: 'admin',
-          checkPass: '123456'
+          account: '',
+          checkPass: ''
         },
         rules2: {
           account: [
@@ -48,17 +48,16 @@
         this.$refs.ruleForm.validate((valid) => {
           if (valid) {
             this.logining = true;
-            var loginParams = { username: this.ruleForm.account, password: this.ruleForm.checkPass };
-            requestLogin(loginParams).then(data => {
+            var loginParams = { user: this.ruleForm.account, passwd: this.ruleForm.checkPass };
+            this.$http.post('/taohuihui/admin/login',loginParams).then(res => {
               this.logining = false;
-              let { msg, code, user } = data;
-              if (code !== 200) {
+              if (res.body.code != 1) {
                 this.$message({
-                  message: msg,
+                  message: res.body.msg,
                   type: 'error'
                 });
               } else {
-                sessionStorage.setItem('user', JSON.stringify(user));
+                sessionStorage.setItem('user', JSON.stringify(res.body.data));
                 this.$router.push({ path: '/table' });
               }
             });
