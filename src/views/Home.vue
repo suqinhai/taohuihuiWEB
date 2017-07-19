@@ -52,14 +52,14 @@
 			</aside>
 			<section class="content-container">
 				<div class="grid-content bg-purple-light">
-					<el-col :span="24" class="breadcrumb-container">
+					<!-- <el-col :span="24" class="breadcrumb-container">
 						<strong class="title">{{$route.name}}</strong>
 						<el-breadcrumb separator="/" class="breadcrumb-inner">
 							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
 								{{ item.name }}
 							</el-breadcrumb-item>
 						</el-breadcrumb>
-					</el-col>
+					</el-col> -->
 					<el-col :span="24" class="content-wrapper">
 						<transition name="fade" mode="out-in">
 							<router-view></router-view>
@@ -242,6 +242,7 @@
 			.content-container {
 				// background: #f1f2f7;
 				flex:1;
+				//background: #f2f2f2;
 				// position: absolute;
 				// right: 0px;
 				// top: 0px;
@@ -267,4 +268,6 @@
 			}
 		}
 	}
+
+	
 </style>
