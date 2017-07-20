@@ -5,7 +5,9 @@ const Main = resolve => require(['./views/Main.vue'], resolve)
 
 
 //首页模块
-const nav = resolve => require(['./views/index/nav.vue'], resolve)
+const topNav = resolve => require(['./views/index/topNav.vue'], resolve)
+const bottomNav = resolve => require(['./views/index/bottomNav.vue'], resolve)
+const poster = resolve => require(['./views/index/poster.vue'], resolve)
 
 let routes = [
     {
@@ -23,11 +25,13 @@ let routes = [
     {
         path: '/',
         component: Home,
-        name: '首页',
+        name: '首页配置',
         iconCls: 'fa fa-address-card',
         leaf: false,//有多个节点
         children: [
-            { path: '/index/nav', component: nav, name: '首页菜单' }
+            { path: '/index/topNav', component: topNav, name: '头部菜单' },
+            { path: '/index/bottomNav', component: bottomNav, name: '底部菜单' },
+            { path: '/index/poster', component: poster, name: '海报轮播' },
         ]
     },
     {
