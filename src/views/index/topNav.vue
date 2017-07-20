@@ -33,15 +33,15 @@
                 <el-table :data="tabledata" v-loading="listLoading" @selection-change="selsChange" style="width: 100%;" :max-height="tableHeight" ref="table" @row-click="handleRowClick">
                     <el-table-column type="selection" width="55">
                     </el-table-column>
-                    <el-table-column prop="_id" label="_id">
+                    <el-table-column prop="_id" show-overflow-tooltip label="_id">
                     </el-table-column>
-                    <el-table-column prop="name" label="名称">
+                    <el-table-column prop="name" show-overflow-tooltip label="名称">
                     </el-table-column>
-                    <el-table-column prop="sort" label="权重">
+                    <el-table-column prop="sort" show-overflow-tooltip label="权重">
                     </el-table-column>
-                     <el-table-column prop="createTime" label="创建时间">
+                     <el-table-column width="170" show-overflow-tooltip prop="createTime" label="创建时间">
                     </el-table-column>
-                    <el-table-column prop="updateTime" label="更新时间">
+                    <el-table-column width="170" show-overflow-tooltip prop="updateTime" label="更新时间">
                     </el-table-column>
                 </el-table>
                 <!--分页-->

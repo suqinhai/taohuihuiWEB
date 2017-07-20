@@ -31,21 +31,29 @@
                 </el-col>
                 <!--列表-->
                 <el-table :data="tabledata" v-loading="listLoading" @selection-change="selsChange" style="width: 100%;" :max-height="tableHeight" ref="table" @row-click="handleRowClick">
-                    <el-table-column type="selection" width="55">
+                    <el-table-column show-overflow-tooltip type="selection" width="55">
                     </el-table-column>
-                    <el-table-column prop="_id" label="_id">
+                    <el-table-column prop="_id" show-overflow-tooltip label="_id">
                     </el-table-column>
-                    <el-table-column prop="title" label="标题">
+                    <el-table-column prop="title" show-overflow-tooltip label="标题">
                     </el-table-column>
-                     <el-table-column prop="alt" label="替代图像文本">
+                     <el-table-column prop="alt" show-overflow-tooltip label="替代图像文本">
                     </el-table-column>
-                     <el-table-column prop="url" label="海报">
+                     <el-table-column prop="img"  show-overflow-tooltip label="海报">
+                        <template scope="scope">
+                             <el-tooltip placement="bottom"> 
+                                <div slot="content"><img style="max-width:300px;" :src="scope.row.img"></div> 
+                                <i class="fa fa-fw fa-picture-o bg-blue-light" style="cursor: pointer;" aria-hidden="true"></i> 
+                            </el-tooltip> 
+                        </template>
                     </el-table-column>
-                    <el-table-column prop="sort" label="权重">
+                    <el-table-column prop="url"  show-overflow-tooltip label="跳转链接">
                     </el-table-column>
-                     <el-table-column prop="createTime" label="创建时间">
+                    <el-table-column prop="sort"  show-overflow-tooltip label="权重">
                     </el-table-column>
-                    <el-table-column prop="updateTime" label="更新时间">
+                     <el-table-column prop="createTime" width="170" show-overflow-tooltip label="创建时间">
+                    </el-table-column>
+                    <el-table-column prop="updateTime" width="170" show-overflow-tooltip label="更新时间">
                     </el-table-column>
                 </el-table>
                 <!--分页-->
@@ -75,16 +83,19 @@
                         <el-form-item prop="alt" label="替代图像文本">
                             <el-input v-model="form.alt"></el-input>
                         </el-form-item>
-                        <el-form-item prop="url" label="图标">
+                        <el-form-item prop="img" label="图标">
                             <el-upload
                               class="avatar-uploader"
                               :action="interface.upload"
                               :show-file-list="false"
                               :on-success="handleAvatarSuccess"
                               :before-upload="beforeAvatarUpload">
-                              <img v-if="form.url" :src="form.url" class="avatar">
+                              <img v-if="form.img" :src="form.img" class="avatar">
                               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
+                        </el-form-item>
+                         <el-form-item prop="url" label="跳转链接">
+                            <el-input v-model="form.url"></el-input>
                         </el-form-item>
                         <el-form-item prop="sort" label="权重">
                             <el-input v-model="form.sort" type="number"></el-input>
@@ -131,6 +142,7 @@ export default {
                 FormVisible: false, //编辑界面是否显示
                 //编辑界面数据
                 form: {
+                    'img': '',
                     'url': '', 
                     'sort': '',
                     'title': '', 
@@ -188,6 +200,7 @@ export default {
                 this.formType = data._id
                 this.form._id = data._id
                 this.form.url = data.url
+                this.form.img = data.img
                 this.form.title = data.title
                 this.form.alt = data.alt
                 this.form.sort = parseInt(data.sort)
@@ -198,6 +211,7 @@ export default {
                 this.form._id = ''
                 this.form.title = ''
                 this.form.alt = ''
+                this.form.img = ''
                 this.form.url = ''
                 this.form.sort = ''
                 this.FormVisible = true
@@ -288,7 +302,7 @@ export default {
                 this.sels = []
             },
             handleAvatarSuccess(res, file) {
-                this.form.url = res.data.url
+                this.form.img = res.data.url
             },
             beforeAvatarUpload(file) {
                 // const isJPG = file.type === 'image/jpeg';
