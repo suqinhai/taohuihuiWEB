@@ -67,19 +67,22 @@
                 </div>
                 <div class="form-box">
                     <el-form ref="form" :model="form" :rules="formRules" label-width="180px">
+                        <el-form-item prop="user" label="用户名">
+                            <el-input v-model="form.user" :disabled="formType != 0"></el-input>
+                        </el-form-item>
                         <el-form-item prop="name" label="昵称">
                             <el-input v-model="form.name"></el-input>
                         </el-form-item>
                         <el-form-item prop="email" label="邮箱">
                             <el-input v-model="form.email"></el-input>
                         </el-form-item>
-                        <el-form-item prop="user" label="用户名">
-                            <el-input v-model="form.user"></el-input>
-                        </el-form-item>
-                        <el-form-item prop="passwd" label="密码">
+                        <el-form-item prop="passwd" label="旧密码" v-if="formType != 0">
                             <el-input v-model="form.passwd"></el-input>
                         </el-form-item>
-                        <el-form-item prop="confirmPasswd" label="确认密码">
+                        <el-form-item prop="newPasswd" label="新密码">
+                            <el-input v-model="form.newPasswd"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="confirmPasswd" label="确认新密码">
                             <el-input v-model="form.confirmPasswd"></el-input>
                         </el-form-item>
                         <el-form-item>
@@ -126,8 +129,9 @@ export default {
                 form: {
                     'name': '', 
                     'email': '',
-                    'user': '',
                     'passwd': '',
+                    'newPasswd':'',
+                    'confirmPasswd':''
                 },
                 formRules: {},
             }
@@ -180,9 +184,11 @@ export default {
                 let data = this.sels.map(item => item)[0]
                 this.formType = data._id
                 this.form._id = data._id
-                this.form.name = data.name
-                this.form.email = data.email
                 this.form.user = data.user
+                this.form.name = data.name
+                this.form.email = data.email,
+                this.form.newPasswd = data.newPasswd
+                this.form.confirmPasswd = data.confirmPasswd
                 this.form.passwd = data.passwd                
                 this.FormVisible = true
             },
@@ -193,6 +199,8 @@ export default {
                 this.form.email = ''
                 this.form.user = ''
                 this.form.passwd = ''
+                this.form.newPasswd = ''
+                this.form.confirmPasswd = ''
                 this.FormVisible = true
             },
 
@@ -210,9 +218,9 @@ export default {
                         _ids: _ids
                     }).then(res => {
                         this.listLoading = false
-                        if (res.code == 0) {
+                        if (res.body.code == 0) {
                             this.$message({
-                                message: res.msg,
+                                message: res.body.msg,
                                 type: 'error'
                             })
                             return false;
@@ -230,16 +238,22 @@ export default {
             },
 
             onSubmit: function() {
-                this.form.sort = parseInt(this.form.sort)
+                if ( this.form.newPasswd != this.form.confirmPasswd ){
+                    this.$message({
+                        message: '2次输入的密码不一致',
+                        type: 'error'
+                    });
+                    return false;
+                }
                 this.$refs.form.validate((valid) => {
                     if (valid) {
                         if (this.form._id) {
                             this.listLoading = true;
                             this.$http.post(this.interface.list.edit, this.form).then(res => {
                                 this.listLoading = false;
-                                if (res.code == 0) {
+                                if (res.body.code == 0) {
                                     this.$message({
-                                        message: res.msg,
+                                        message: res.body.msg,
                                         type: 'error'
                                     })
                                     return false;
@@ -256,8 +270,8 @@ export default {
                             this.$http.post(this.interface.list.add, this.form).then(res => {
                                 this.listLoading = false;
                                 if (res.code == 0) {
-                                    this.$message({
-                                        message: res.msg,
+                                    this.body.$message({
+                                        message: res.body.msg,
                                         type: 'error'
                                     })
                                     return false;

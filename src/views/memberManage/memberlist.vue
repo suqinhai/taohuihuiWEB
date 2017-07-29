@@ -12,13 +12,13 @@
                             <el-button size="small" type="primary" @click="refleshTable">刷新</el-button>
                         </el-form-item>
                         <el-form-item>
+                            <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
+                        </el-form-item>
+                        <el-form-item>
                             <el-button size="small" type="primary" :disabled="this.sels.length!=1" @click="handleEdit">编辑</el-button>
                         </el-form-item>
                         <el-form-item>
                             <el-button size="small" type="danger" @click="handleDel" :disabled="this.sels.length == 0">删除</el-button>
-                        </el-form-item>
-                         <el-form-item>
-                            <el-button size="small" type="primary" @click="handleOnline" :disabled="this.sels.length == 0">上线</el-button>
                         </el-form-item>
                     </el-form>
                 </el-col>
@@ -31,72 +31,19 @@
                 </el-col>
                 <!--列表-->
                 <el-table :data="tabledata" v-loading="listLoading" @selection-change="selsChange" style="width: 100%;" :max-height="tableHeight" ref="table" @row-click="handleRowClick">
-                    <el-table-column show-overflow-tooltip type="selection" width="55">
+                    <el-table-column type="selection" width="55">
                     </el-table-column>
-                    <el-table-column prop="title" show-overflow-tooltip label="标题">
+                    <el-table-column prop="_id" show-overflow-tooltip label="_id">
                     </el-table-column>
-                     <el-table-column prop="pictUrl"  show-overflow-tooltip label="海报">
-                        <template scope="scope">
-                             <el-tooltip placement="bottom"> 
-                                <div slot="content"><img style="max-width:300px;" :src="scope.row.pictUrl"></div> 
-                                <i class="fa fa-fw fa-picture-o bg-blue-light" style="cursor: pointer;" aria-hidden="true"></i> 
-                            </el-tooltip> 
-                        </template>
+                     <el-table-column prop="user" show-overflow-tooltip label="用户名">
                     </el-table-column>
-                    <el-table-column prop="zkPrice" show-overflow-tooltip label="价格">
+                    <el-table-column prop="name" show-overflow-tooltip label="昵称">
                     </el-table-column>
-                    <el-table-column prop="couponShortLinkUrl"  show-overflow-tooltip label="优惠券链接">
-                        <template scope="scope">
-                            <a :href="scope.row.couponShortLinkUrl" target="_blank" style="    color: #1f2d3d;"><i class="el-icon-document" style="cursor: pointer;" aria-hidden="true"></i></a> 
-                        </template>
+                    <el-table-column prop="email" show-overflow-tooltip label="邮箱">
                     </el-table-column>
-                    <el-table-column prop="clickUrl"  show-overflow-tooltip label="商品链接">
-                        <template scope="scope">
-                            <a :href="scope.row.clickUrl" target="_blank" style="color: #1f2d3d;"><i class="el-icon-document" style="cursor: pointer;" aria-hidden="true"></i></a> 
-                        </template>
+                    <el-table-column prop="createTime" width="170" show-overflow-tooltip label="创建时间">
                     </el-table-column>
-                    <el-table-column prop="tkCommFee"  show-overflow-tooltip label="佣金">
-                    </el-table-column>
-                    <el-table-column prop="category"  show-overflow-tooltip label="类目">
-                    </el-table-column>
-                    <el-table-column prop="sort"  show-overflow-tooltip label="排序">
-                    </el-table-column>
-                    <el-table-column prop="publish"  show-overflow-tooltip label="状态" :formatter='formatState'>
-                    </el-table-column>
-                    <!--  <el-table-column prop="couponEffectiveStartTime" width="120" show-overflow-tooltip label="优惠券开始时间">
-                    </el-table-column>
-                    <el-table-column prop="couponEffectiveEndTime" width="120" show-overflow-tooltip label="优惠券结束时间">
-                    </el-table-column> -->
-                     <el-table-column prop="'详情'"  show-overflow-tooltip label="更多详情">
-                        <template scope="scope">
-                            <el-popover
-                              ref="popover4"
-                              placement="bottom"
-                              width="100%"
-                              trigger="hover">
-                              <el-table :data="[scope.row]">
-                                <el-table-column prop="_id" show-overflow-tooltip label="_id">
-                                </el-table-column>
-                                <el-table-column prop="couponLeftCount" width="150" show-overflow-tooltip label="剩余优惠券数量">
-                                </el-table-column>
-                                <el-table-column prop="couponTotalCount" width="120" show-overflow-tooltip label="优惠券总数">
-                                </el-table-column>
-                                <el-table-column prop="tkRate" width="120" show-overflow-tooltip label="佣金百分比">
-                                </el-table-column>
-                                <el-table-column prop="userType" width="100" show-overflow-tooltip label="是否天猫">
-                                </el-table-column>
-                                <el-table-column prop="couponInfo" width="150" show-overflow-tooltip label="优惠券信息">
-                                </el-table-column>
-                                <el-table-column prop="shopTitle" width="150" show-overflow-tooltip label="卖家店铺">
-                                </el-table-column>
-                                <el-table-column prop="couponEffectiveStartTime" width="150" show-overflow-tooltip label="优惠券开始时间">
-                                </el-table-column>
-                                <el-table-column prop="couponEffectiveEndTime" width="150" show-overflow-tooltip label="优惠券结束时间">
-                                </el-table-column>
-                              </el-table>
-                            </el-popover>
-                            <a style="cursor: pointer;" v-popover:popover4>详情</a>
-                        </template>
+                    <el-table-column prop="updateTime" width="170" show-overflow-tooltip label="更新时间">
                     </el-table-column>
                 </el-table>
                 <!--分页-->
@@ -105,8 +52,6 @@
                     </el-pagination>
                 </el-col>
             </div>
-
-
             <!--编辑/新增-->
             <template v-if="FormVisible">
                 <div :span="24" class="toolbar" style="padding-bottom: 0px;">
@@ -122,8 +67,23 @@
                 </div>
                 <div class="form-box">
                     <el-form ref="form" :model="form" :rules="formRules" label-width="180px">
-                        <el-form-item prop="sort" label="排序">
-                            <el-input v-model="form.sort" type="number"></el-input>
+                        <el-form-item prop="user" label="用户名">
+                            <el-input v-model="form.user" :disabled="formType != 0"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="name" label="昵称">
+                            <el-input v-model="form.name"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="email" label="邮箱">
+                            <el-input v-model="form.email"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="passwd" label="旧密码" v-if="formType != 0">
+                            <el-input v-model="form.passwd"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="newPasswd" label="新密码">
+                            <el-input v-model="form.newPasswd"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="confirmPasswd" label="确认新密码">
+                            <el-input v-model="form.confirmPasswd"></el-input>
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click.native.prevent="onSubmit">提交</el-button>
@@ -148,10 +108,10 @@ export default {
                 interface: {
                     upload: '/taohuihui/public/upload',
                     list: {
-                        get: '/taohuihui/goods/get',
-                        status: '/taohuihui/goods/status',
-                        edit: '/taohuihui/goods/modify',
-                        del: '/taohuihui/goods/del'
+                        get: '/taohuihui/user/get',
+                        add: '/taohuihui/user/add',
+                        edit: '/taohuihui/user/modify',
+                        del: '/taohuihui/user/del'
                     },
                 },
                 level: 0,
@@ -167,15 +127,16 @@ export default {
                 FormVisible: false, //编辑界面是否显示
                 //编辑界面数据
                 form: {
-                    'sort': '',
+                    'name': '', 
+                    'email': '',
+                    'passwd': '',
+                    'newPasswd':'',
+                    'confirmPasswd':''
                 },
                 formRules: {},
             }
         },
         methods: {
-            formatState(row, column){
-                return row.publish ? '已上线' : '未上线'
-            },
             handleSizeChange(val) {
                 this.per_page = val
                 this.getData()
@@ -186,6 +147,7 @@ export default {
             },
             selsChange: function(sels) {
                 this.sels = sels;
+
             },
             handleRowClick: function(row, event, column) {
                 this.$refs.table.toggleRowSelection(row)
@@ -210,44 +172,10 @@ export default {
                     name: this.filters.name,
                 };
                 this.listLoading = true
-                this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page  + '&publish=0').then((data) => {
+                this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page).then((data) => {
                     this.tabledata = data.body.list
                     this.total = parseInt(data.body.count)
                     this.listLoading = false
-                });
-            },
-
-            handleOnline:function(){
-                this.$confirm('确认上线选中记录吗？', '提示', {
-                    type: 'warning'
-                }).then(() => {
-                    var data = this.sels.map(item => item)
-                    var _ids = []
-                    data.forEach(function(value, key) {
-                        _ids.push(value._id)
-                    })
-                    this.listLoading = true;
-                    this.$http.post(this.interface.list.status, {
-                        _ids: _ids,
-                        publish:1,
-                    }).then(res => {
-                        this.listLoading = false
-                        if (res.code == 0) {
-                            this.$message({
-                                message: res.msg,
-                                type: 'error'
-                            })
-                            return false;
-                        }
-                        this.getData()
-                        this.$message({
-                            message: '上线成功',
-                            type: 'success'
-                        });
-
-                    })
-                }).catch(() => {
-
                 });
             },
            
@@ -256,21 +184,23 @@ export default {
                 let data = this.sels.map(item => item)[0]
                 this.formType = data._id
                 this.form._id = data._id
-                this.form.url = data.url
-                this.form.img = data.img
-                this.form.title = data.title
-                this.form.alt = data.alt
-                this.form.sort = parseInt(data.sort)
+                this.form.user = data.user
+                this.form.name = data.name
+                this.form.email = data.email,
+                this.form.newPasswd = data.newPasswd
+                this.form.confirmPasswd = data.confirmPasswd
+                this.form.passwd = data.passwd                
                 this.FormVisible = true
             },
             handleAdd: function() {
                 this.formType = 0
                 this.form._id = ''
-                this.form.title = ''
-                this.form.alt = ''
-                this.form.img = ''
-                this.form.url = ''
-                this.form.sort = ''
+                this.form.name = ''
+                this.form.email = ''
+                this.form.user = ''
+                this.form.passwd = ''
+                this.form.newPasswd = ''
+                this.form.confirmPasswd = ''
                 this.FormVisible = true
             },
 
@@ -288,9 +218,9 @@ export default {
                         _ids: _ids
                     }).then(res => {
                         this.listLoading = false
-                        if (res.code == 0) {
+                        if (res.body.code == 0) {
                             this.$message({
-                                message: res.msg,
+                                message: res.body.msg,
                                 type: 'error'
                             })
                             return false;
@@ -308,16 +238,22 @@ export default {
             },
 
             onSubmit: function() {
-                this.form.sort = parseInt(this.form.sort)
+                if ( this.form.newPasswd != this.form.confirmPasswd ){
+                    this.$message({
+                        message: '2次输入的密码不一致',
+                        type: 'error'
+                    });
+                    return false;
+                }
                 this.$refs.form.validate((valid) => {
                     if (valid) {
                         if (this.form._id) {
                             this.listLoading = true;
                             this.$http.post(this.interface.list.edit, this.form).then(res => {
                                 this.listLoading = false;
-                                if (res.code == 0) {
+                                if (res.body.code == 0) {
                                     this.$message({
-                                        message: res.msg,
+                                        message: res.body.msg,
                                         type: 'error'
                                     })
                                     return false;
@@ -334,8 +270,8 @@ export default {
                             this.$http.post(this.interface.list.add, this.form).then(res => {
                                 this.listLoading = false;
                                 if (res.code == 0) {
-                                    this.$message({
-                                        message: res.msg,
+                                    this.body.$message({
+                                        message: res.body.msg,
                                         type: 'error'
                                     })
                                     return false;
@@ -359,7 +295,7 @@ export default {
                 this.sels = []
             },
             handleAvatarSuccess(res, file) {
-                this.form.img = res.data.url
+                this.form.url = res.data.url
             },
             beforeAvatarUpload(file) {
                 // const isJPG = file.type === 'image/jpeg';

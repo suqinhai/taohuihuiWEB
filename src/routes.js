@@ -15,7 +15,9 @@ const poster = resolve => require(['./views/index/poster.vue'], resolve)
 const notOnline = resolve => require(['./views/goods/notOnline.vue'], resolve)
 const online = resolve => require(['./views/goods/online.vue'], resolve)
 
-
+//会员列表
+const memberlist = resolve => require(['./views/memberManage/memberlist.vue'], resolve)
+const shopCart = resolve => require(['./views/memberManage/shopCart.vue'], resolve)
 
 
 let routes = [
@@ -44,11 +46,24 @@ let routes = [
             { path: '/index/poster', component: poster, name: '海报轮播' },
         ]
     },
+
+    {
+        path: '/',
+        component: Home,
+        name: '会员管理',
+        iconCls: 'fa fa-user-circle',
+        leaf: false,//有多个节点
+        children: [
+            { path: '/memberManage/memberlist', component: memberlist, name: '会员列表' },
+            { path: '/memberManage/shopCart', component: shopCart, name: '购物车列表' },
+        ]
+    },
+
     {
         path: '/',
         component: Home,
         name: '商品管理',
-        iconCls: 'fa fa-address-card',
+        iconCls: 'fa fa-truck',
         leaf: false,//有多个节点
         children: [
             { path: '/goods/notOnline', component: notOnline, name: '未上线商品' },
@@ -59,7 +74,7 @@ let routes = [
         path: '/',
         component: Home,
         name: '系统配置',
-        iconCls: 'fa fa-address-card',
+        iconCls: 'fa fa-gear',
         leaf: false,//有多个节点
         children: [
             { path: '/system/admin', component: admin, name: '用户管理' },
