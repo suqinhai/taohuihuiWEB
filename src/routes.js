@@ -3,6 +3,8 @@ const NotFound = resolve => require(['./views/404.vue'], resolve)
 const Home = resolve => require(['./views/Home.vue'], resolve)
 const Main = resolve => require(['./views/Main.vue'], resolve)
 
+//系统配置
+const admin = resolve => require(['./views/system/admin.vue'], resolve)
 
 //首页模块
 const topNav = resolve => require(['./views/index/topNav.vue'], resolve)
@@ -12,6 +14,8 @@ const poster = resolve => require(['./views/index/poster.vue'], resolve)
 //商品管理模块
 const notOnline = resolve => require(['./views/goods/notOnline.vue'], resolve)
 const online = resolve => require(['./views/goods/online.vue'], resolve)
+
+
 
 
 let routes = [
@@ -27,6 +31,7 @@ let routes = [
         name: '',
         hidden: true
     },
+    
     {
         path: '/',
         component: Home,
@@ -48,6 +53,16 @@ let routes = [
         children: [
             { path: '/goods/notOnline', component: notOnline, name: '未上线商品' },
             { path: '/goods/online', component: online, name: '已上线商品' },
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '系统配置',
+        iconCls: 'fa fa-address-card',
+        leaf: false,//有多个节点
+        children: [
+            { path: '/system/admin', component: admin, name: '用户管理' },
         ]
     },
     {

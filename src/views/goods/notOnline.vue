@@ -69,9 +69,35 @@
                     </el-table-column>
                     <el-table-column prop="couponEffectiveEndTime" width="120" show-overflow-tooltip label="优惠券结束时间">
                     </el-table-column> -->
-                    <el-table-column prop="category"  show-overflow-tooltip label="更多详情">
+                     <el-table-column prop="'详情'"  show-overflow-tooltip label="更多详情">
                         <template scope="scope">
-                            <i class="el-icon-menu" style="cursor: pointer;" aria-hidden="true"></i> 
+                            <el-popover
+                              ref="popover4"
+                              placement="bottom"
+                              width="100%"
+                              trigger="hover">
+                              <el-table :data="[scope.row]">
+                                <el-table-column prop="_id" show-overflow-tooltip label="_id">
+                                </el-table-column>
+                                <el-table-column prop="couponLeftCount" width="150" show-overflow-tooltip label="剩余优惠券数量">
+                                </el-table-column>
+                                <el-table-column prop="couponTotalCount" width="120" show-overflow-tooltip label="优惠券总数">
+                                </el-table-column>
+                                <el-table-column prop="tkRate" width="120" show-overflow-tooltip label="佣金百分比">
+                                </el-table-column>
+                                <el-table-column prop="userType" width="100" show-overflow-tooltip label="是否天猫">
+                                </el-table-column>
+                                <el-table-column prop="couponInfo" width="150" show-overflow-tooltip label="优惠券信息">
+                                </el-table-column>
+                                <el-table-column prop="shopTitle" width="150" show-overflow-tooltip label="卖家店铺">
+                                </el-table-column>
+                                <el-table-column prop="couponEffectiveStartTime" width="150" show-overflow-tooltip label="优惠券开始时间">
+                                </el-table-column>
+                                <el-table-column prop="couponEffectiveEndTime" width="150" show-overflow-tooltip label="优惠券结束时间">
+                                </el-table-column>
+                              </el-table>
+                            </el-popover>
+                            <a style="cursor: pointer;" v-popover:popover4>详情</a>
                         </template>
                     </el-table-column>
                 </el-table>
