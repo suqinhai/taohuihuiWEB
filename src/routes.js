@@ -19,8 +19,13 @@ const online = resolve => require(['./views/goods/online.vue'], resolve)
 const memberlist = resolve => require(['./views/memberManage/memberlist.vue'], resolve)
 const shopCart = resolve => require(['./views/memberManage/shopCart.vue'], resolve)
 
+//分类管理
+const classify = resolve => require(['./views/classifyManage/classify.vue'], resolve)
+const property = resolve => require(['./views/classifyManage/property.vue'], resolve)
+
 
 let routes = [
+
     {
         path: '/login',
         component: Login,
@@ -50,12 +55,34 @@ let routes = [
     {
         path: '/',
         component: Home,
+        name: '分类管理',
+        iconCls: 'fa fa-th-list',
+        leaf: false,//有多个节点
+        children: [
+            { path: '/classifyManage/classify', component: classify, name: '分类列表' },
+            { path: '/classifyManage/property/:classifyId', component: property, name: '属性列表', hidden:true },
+        ]
+    },
+
+    {
+        path: '/',
+        component: Home,
+        name: '购物车管理',
+        iconCls: 'fa fa-truck',
+        leaf: false,//有多个节点
+        children: [
+             { path: '/memberManage/shopCart', component: shopCart, name: '购物车列表' },
+        ]
+    },
+
+    {
+        path: '/',
+        component: Home,
         name: '会员管理',
         iconCls: 'fa fa-user-circle',
         leaf: false,//有多个节点
         children: [
             { path: '/memberManage/memberlist', component: memberlist, name: '会员列表' },
-            { path: '/memberManage/shopCart', component: shopCart, name: '购物车列表' },
         ]
     },
 
@@ -63,7 +90,7 @@ let routes = [
         path: '/',
         component: Home,
         name: '商品管理',
-        iconCls: 'fa fa-truck',
+        iconCls: 'fa fa-shopping-basket',
         leaf: false,//有多个节点
         children: [
             { path: '/goods/notOnline', component: notOnline, name: '未上线商品' },

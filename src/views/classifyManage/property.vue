@@ -8,6 +8,9 @@
                         <el-form-item>
                             <strong class="title">{{$route.name}}</strong>
                         </el-form-item>
+                         <el-form-item>
+                            <el-button size="small" type="primary" @click="$router.go(-1)">返回</el-button>
+                        </el-form-item>
                         <el-form-item>
                             <el-button size="small" type="primary" @click="refleshTable">刷新</el-button>
                         </el-form-item>
@@ -37,7 +40,7 @@
                     </el-table-column>
                     <el-table-column prop="name" show-overflow-tooltip label="名称">
                     </el-table-column>
-                    <el-table-column prop="url"  show-overflow-tooltip label="图标">
+                    <el-table-column prop="url" show-overflow-tooltip label="图标">
                         <template scope="scope">
                              <el-tooltip placement="bottom"> 
                                 <div slot="content"><img style="max-width:300px;" :src="scope.row.url"></div> 
@@ -45,11 +48,11 @@
                             </el-tooltip> 
                         </template>
                     </el-table-column>
-                    <el-table-column prop="sort" show-overflow-tooltip label="排序">
+                     <el-table-column prop="sort" show-overflow-tooltip label="排序">
                     </el-table-column>
-                     <el-table-column width="170" show-overflow-tooltip prop="createTime" label="创建时间">
+                    <el-table-column prop="createTime" width="170" show-overflow-tooltip label="创建时间">
                     </el-table-column>
-                    <el-table-column width="170" show-overflow-tooltip prop="updateTime" label="更新时间">
+                    <el-table-column prop="updateTime" width="170" show-overflow-tooltip label="更新时间">
                     </el-table-column>
                 </el-table>
                 <!--分页-->
@@ -113,10 +116,10 @@ export default {
                 interface: {
                     upload: '/taohuihui/public/upload',
                     list: {
-                        get: '/taohuihui/nav/get',
-                        add: '/taohuihui/nav/add',
-                        edit: '/taohuihui/nav/modify',
-                        del: '/taohuihui/nav/del'
+                        get: '/taohuihui/property/getProperty',
+                        add: '/taohuihui/property/addProperty',
+                        edit: '/taohuihui/property/modifyProperty',
+                        del: '/taohuihui/property/delProperty'
                     },
                 },
                 level: 0,
@@ -133,8 +136,8 @@ export default {
                 //编辑界面数据
                 form: {
                     'name': '', 
-                    'sort': '',
-                    'url':'',
+                    'url': '',
+                    'sort': '', 
                 },
                 formRules: {},
             }
@@ -167,7 +170,6 @@ export default {
                 this.page = 1;
                 this.getData()
             },
-
             //获取列表
             getData() {
                 let para = {
@@ -175,7 +177,7 @@ export default {
                     name: this.filters.name,
                 };
                 this.listLoading = true
-                this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page).then((data) => {
+                this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page + '&classifyId=' + this.$route.params.classifyId).then((data) => {
                     this.tabledata = data.body.list
                     this.total = parseInt(data.body.count)
                     this.listLoading = false
@@ -194,6 +196,7 @@ export default {
             },
             handleAdd: function() {
                 this.formType = 0
+                this.form.classifyId = this.$route.params.classifyId;
                 this.form._id = ''
                 this.form.name = ''
                 this.form.url = ''

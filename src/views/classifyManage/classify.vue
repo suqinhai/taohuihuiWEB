@@ -37,7 +37,7 @@
                     </el-table-column>
                     <el-table-column prop="name" show-overflow-tooltip label="名称">
                     </el-table-column>
-                    <el-table-column prop="url"  show-overflow-tooltip label="图标">
+                    <el-table-column prop="url" show-overflow-tooltip label="图标">
                         <template scope="scope">
                              <el-tooltip placement="bottom"> 
                                 <div slot="content"><img style="max-width:300px;" :src="scope.row.url"></div> 
@@ -45,11 +45,18 @@
                             </el-tooltip> 
                         </template>
                     </el-table-column>
-                    <el-table-column prop="sort" show-overflow-tooltip label="排序">
+                     <el-table-column prop="sort" show-overflow-tooltip label="排序">
                     </el-table-column>
-                     <el-table-column width="170" show-overflow-tooltip prop="createTime" label="创建时间">
+                     <el-table-column prop="property" show-overflow-tooltip label="属性列表">
+                        <template scope="scope">
+                            <router-link :to="{'name':'属性列表',params:{ 'classifyId': scope.row._id }}">
+                            <i class="fa fa-align-justify" style="cursor: pointer;" aria-hidden="true"></i>
+                            </router-link>
+                        </template>
                     </el-table-column>
-                    <el-table-column width="170" show-overflow-tooltip prop="updateTime" label="更新时间">
+                    <el-table-column prop="createTime" width="170" show-overflow-tooltip label="创建时间">
+                    </el-table-column>
+                    <el-table-column prop="updateTime" width="170" show-overflow-tooltip label="更新时间">
                     </el-table-column>
                 </el-table>
                 <!--分页-->
@@ -113,11 +120,11 @@ export default {
                 interface: {
                     upload: '/taohuihui/public/upload',
                     list: {
-                        get: '/taohuihui/nav/get',
-                        add: '/taohuihui/nav/add',
-                        edit: '/taohuihui/nav/modify',
-                        del: '/taohuihui/nav/del'
-                    },
+                        get: '/taohuihui/classify/get',
+                        add: '/taohuihui/classify/add',
+                        edit: '/taohuihui/classify/modify',
+                        del: '/taohuihui/classify/del'
+                    }
                 },
                 level: 0,
                 levelid: [],
@@ -133,8 +140,8 @@ export default {
                 //编辑界面数据
                 form: {
                     'name': '', 
-                    'sort': '',
-                    'url':'',
+                    'url': '',
+                    'sort': '', 
                 },
                 formRules: {},
             }
@@ -167,7 +174,6 @@ export default {
                 this.page = 1;
                 this.getData()
             },
-
             //获取列表
             getData() {
                 let para = {

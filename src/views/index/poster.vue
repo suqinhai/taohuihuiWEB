@@ -49,7 +49,7 @@
                     </el-table-column>
                     <el-table-column prop="url"  show-overflow-tooltip label="跳转链接">
                     </el-table-column>
-                    <el-table-column prop="sort"  show-overflow-tooltip label="权重">
+                    <el-table-column prop="sort"  show-overflow-tooltip label="排序">
                     </el-table-column>
                      <el-table-column prop="createTime" width="170" show-overflow-tooltip label="创建时间">
                     </el-table-column>
@@ -97,7 +97,7 @@
                          <el-form-item prop="url" label="跳转链接">
                             <el-input v-model="form.url"></el-input>
                         </el-form-item>
-                        <el-form-item prop="sort" label="权重">
+                        <el-form-item prop="sort" label="排序">
                             <el-input v-model="form.sort" type="number"></el-input>
                         </el-form-item>
                         <el-form-item>

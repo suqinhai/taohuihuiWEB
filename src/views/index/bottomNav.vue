@@ -45,7 +45,7 @@
                             </el-tooltip> 
                         </template>
                     </el-table-column>
-                     <el-table-column prop="sort" show-overflow-tooltip label="权重">
+                     <el-table-column prop="sort" show-overflow-tooltip label="排序">
                     </el-table-column>
                     <el-table-column prop="createTime" width="170" show-overflow-tooltip label="创建时间">
                     </el-table-column>
@@ -87,7 +87,7 @@
                               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
                         </el-form-item>
-                        <el-form-item prop="sort" label="权重">
+                        <el-form-item prop="sort" label="排序">
                             <el-input v-model="form.sort" type="number"></el-input>
                         </el-form-item>
                         <el-form-item>
