@@ -35,7 +35,7 @@
                     </el-table-column>
                     <el-table-column prop="_id" show-overflow-tooltip label="_id">
                     </el-table-column>
-                     <el-table-column prop="user" show-overflow-tooltip label="用户名">
+                    <el-table-column prop="user" show-overflow-tooltip label="用户名">
                     </el-table-column>
                     <el-table-column prop="name" show-overflow-tooltip label="昵称">
                     </el-table-column>
@@ -100,220 +100,220 @@ import NProgress from 'nprogress'
 
 export default {
     data() {
-            return {
-                tableHeight: document.documentElement.clientHeight - 220,
-                filters: {
-                    name: '',
-                },
-                interface: {
-                    upload: '/taohuihui/public/upload',
+        return {
+            tableHeight: document.documentElement.clientHeight - 220,
+            filters: {
+                name: '',
+            },
+            interface: {
+                upload: '/taohuihui/public/upload',
                     list: {
                         get: '/taohuihui/admin/get',
                         add: '/taohuihui/admin/add',
                         edit: '/taohuihui/admin/modify',
                         del: '/taohuihui/admin/del'
                     },
-                },
-                level: 0,
-                levelid: [],
-                tabledata: [],
-                pageSizes: [10, 20, 50, 100],
-                per_page: 50,
-                total: 0,
-                page: 1,
-                listLoading: false,
-                sels: [], //列表选中列
-                firstTable: true,
-                FormVisible: false, //编辑界面是否显示
-                //编辑界面数据
-                form: {
-                    'name': '', 
-                    'email': '',
-                    'passwd': '',
-                    'newPasswd':'',
-                    'confirmPasswd':''
-                },
-                formRules: {},
-            }
-        },
-        methods: {
-            handleSizeChange(val) {
-                this.per_page = val
-                this.getData()
             },
-            handleCurrentChange(val) {
-                this.page = val;
-                this.getData();
+            level: 0,
+            levelid: [],
+            tabledata: [],
+            pageSizes: [10, 20, 50, 100],
+            per_page: 50,
+            total: 0,
+            page: 1,
+            listLoading: false,
+            sels: [], //列表选中列
+            firstTable: true,
+            FormVisible: false, //编辑界面是否显示
+            //编辑界面数据
+            form: {
+                'name': '',
+                'email': '',
+                'passwd': '',
+                'newPasswd': '',
+                'confirmPasswd': ''
             },
-            selsChange: function(sels) {
-                this.sels = sels;
-
-            },
-            handleRowClick: function(row, event, column) {
-                this.$refs.table.toggleRowSelection(row)
-            },
-            handleSearch: function() {
-                this.getData()
-            },
-            refleshTable: function() {
-                this.level = 0
-                this.levelid = []
-                this.fid = 0
-                this.filters.name = ''
-                this.per_page = 50
-                this.page = 1;
-                this.getData()
-            },
-
-            //获取列表
-            getData() {
-                let para = {
-                    page: this.page,
-                    name: this.filters.name,
-                };
-                this.listLoading = true
-                this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page).then((data) => {
-                    this.tabledata = data.body.list
-                    this.total = parseInt(data.body.count)
-                    this.listLoading = false
-                });
-            },
-           
-            //显示编辑界面
-            handleEdit: function() {
-                let data = this.sels.map(item => item)[0]
-                this.formType = data._id
-                this.form._id = data._id
-                this.form.user = data.user
-                this.form.name = data.name
-                this.form.email = data.email,
-                this.form.newPasswd = data.newPasswd
-                this.form.confirmPasswd = data.confirmPasswd
-                this.form.passwd = data.passwd                
-                this.FormVisible = true
-            },
-            handleAdd: function() {
-                this.formType = 0
-                this.form._id = ''
-                this.form.name = ''
-                this.form.email = ''
-                this.form.user = ''
-                this.form.passwd = ''
-                this.form.newPasswd = ''
-                this.form.confirmPasswd = ''
-                this.FormVisible = true
-            },
-
-            handleDel: function() {
-                this.$confirm('确认删除选中记录吗？', '提示', {
-                    type: 'warning'
-                }).then(() => {
-                    var data = this.sels.map(item => item)
-                    var _ids = []
-                    data.forEach(function(value, key) {
-                        _ids.push(value._id)
-                    })
-                    this.listLoading = true;
-                    this.$http.post(this.interface.list.del, {
-                        _ids: _ids
-                    }).then(res => {
-                        this.listLoading = false
-                        if (res.body.code == 0) {
-                            this.$message({
-                                message: res.body.msg,
-                                type: 'error'
-                            })
-                            return false;
-                        }
-                        this.getData()
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success'
-                        });
-
-                    })
-                }).catch(() => {
-
-                });
-            },
-
-            onSubmit: function() {
-                if ( this.form.newPasswd != this.form.confirmPasswd ){
-                    this.$message({
-                        message: '2次输入的密码不一致',
-                        type: 'error'
-                    });
-                    return false;
-                }
-                this.$refs.form.validate((valid) => {
-                    if (valid) {
-                        if (this.form._id) {
-                            this.listLoading = true;
-                            this.$http.post(this.interface.list.edit, this.form).then(res => {
-                                this.listLoading = false;
-                                if (res.body.code == 0) {
-                                    this.$message({
-                                        message: res.body.msg,
-                                        type: 'error'
-                                    })
-                                    return false;
-                                }
-                                this.$message({
-                                    message: '修改成功',
-                                    type: 'success'
-                                })
-                                this.FormVisible = false;
-                                this.getData();
-                            })
-                        } else {
-                            this.listLoading = true;
-                            this.$http.post(this.interface.list.add, this.form).then(res => {
-                                this.listLoading = false;
-                                if (res.code == 0) {
-                                    this.body.$message({
-                                        message: res.body.msg,
-                                        type: 'error'
-                                    })
-                                    return false;
-                                }
-                                this.$message({
-                                    message: '新增成功',
-                                    type: 'success'
-                                })
-                                this.FormVisible = false;
-                                this.getData();
-                            })
-                        }
-                    } else {
-                        return false
-                    }
-                })
-            },
-            preView() {
-                this.firstTable = true;
-                this.FormVisible = false;
-                this.sels = []
-            },
-            handleAvatarSuccess(res, file) {
-                this.form.url = res.data.url
-            },
-            beforeAvatarUpload(file) {
-                // const isJPG = file.type === 'image/jpeg';
-                // const isLt2M = file.size / 1024 / 1024 < 2;
-
-                // if (!isJPG) {
-                //   this.$message.error('上传头像图片只能是 JPG 格式!');
-                // }
-                // if (!isLt2M) {
-                //   this.$message.error('上传头像图片大小不能超过 2MB!');
-                // }
-                // return isJPG && isLt2M;
-            }
-
-        },
-        mounted() {
-            this.getData();
+            formRules: {},
         }
+    },
+    methods: {
+        handleSizeChange(val) {
+            this.per_page = val
+            this.getData()
+        },
+        handleCurrentChange(val) {
+            this.page = val;
+            this.getData();
+        },
+        selsChange: function(sels) {
+            this.sels = sels;
+
+        },
+        handleRowClick: function(row, event, column) {
+            this.$refs.table.toggleRowSelection(row)
+        },
+        handleSearch: function() {
+            this.getData()
+        },
+        refleshTable: function() {
+            this.level = 0
+            this.levelid = []
+            this.fid = 0
+            this.filters.name = ''
+            this.per_page = 50
+            this.page = 1;
+            this.getData()
+        },
+
+        //获取列表
+        getData() {
+            let para = {
+                page: this.page,
+                name: this.filters.name,
+            };
+            this.listLoading = true
+            this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page).then((data) => {
+                this.tabledata = data.body.list
+                this.total = parseInt(data.body.count)
+                this.listLoading = false
+            });
+        },
+
+        //显示编辑界面
+        handleEdit: function() {
+            let data = this.sels.map(item => item)[0]
+            this.formType = data._id
+            this.form._id = data._id
+            this.form.user = data.user
+            this.form.name = data.name
+            this.form.email = data.email,
+                this.form.newPasswd = data.newPasswd
+            this.form.confirmPasswd = data.confirmPasswd
+            this.form.passwd = data.passwd
+            this.FormVisible = true
+        },
+        handleAdd: function() {
+            this.formType = 0
+            this.form._id = ''
+            this.form.name = ''
+            this.form.email = ''
+            this.form.user = ''
+            this.form.passwd = ''
+            this.form.newPasswd = ''
+            this.form.confirmPasswd = ''
+            this.FormVisible = true
+        },
+
+        handleDel: function() {
+            this.$confirm('确认删除选中记录吗？', '提示', {
+                type: 'warning'
+            }).then(() => {
+                var data = this.sels.map(item => item)
+                var _ids = []
+                data.forEach(function(value, key) {
+                    _ids.push(value._id)
+                })
+                this.listLoading = true;
+                this.$http.post(this.interface.list.del, {
+                    _ids: _ids
+                }).then(res => {
+                    this.listLoading = false
+                    if (res.body.code == 0) {
+                        this.$message({
+                            message: res.body.msg,
+                            type: 'error'
+                        })
+                        return false;
+                    }
+                    this.getData()
+                    this.$message({
+                        message: '删除成功',
+                        type: 'success'
+                    });
+
+                })
+            }).catch(() => {
+
+            });
+        },
+
+        onSubmit: function() {
+            if (this.form.newPasswd != this.form.confirmPasswd) {
+                this.$message({
+                    message: '2次输入的密码不一致',
+                    type: 'error'
+                });
+                return false;
+            }
+            this.$refs.form.validate((valid) => {
+                if (valid) {
+                    if (this.form._id) {
+                        this.listLoading = true;
+                        this.$http.post(this.interface.list.edit, this.form).then(res => {
+                            this.listLoading = false;
+                            if (res.body.code == 0) {
+                                this.$message({
+                                    message: res.body.msg,
+                                    type: 'error'
+                                })
+                                return false;
+                            }
+                            this.$message({
+                                message: '修改成功',
+                                type: 'success'
+                            })
+                            this.FormVisible = false;
+                            this.getData();
+                        })
+                    } else {
+                        this.listLoading = true;
+                        this.$http.post(this.interface.list.add, this.form).then(res => {
+                            this.listLoading = false;
+                            if (res.code == 0) {
+                                this.body.$message({
+                                    message: res.body.msg,
+                                    type: 'error'
+                                })
+                                return false;
+                            }
+                            this.$message({
+                                message: '新增成功',
+                                type: 'success'
+                            })
+                            this.FormVisible = false;
+                            this.getData();
+                        })
+                    }
+                } else {
+                    return false
+                }
+            })
+        },
+        preView() {
+            this.firstTable = true;
+            this.FormVisible = false;
+            this.sels = []
+        },
+        handleAvatarSuccess(res, file) {
+            this.form.url = res.data.url
+        },
+        beforeAvatarUpload(file) {
+            // const isJPG = file.type === 'image/jpeg';
+            // const isLt2M = file.size / 1024 / 1024 < 2;
+
+            // if (!isJPG) {
+            //   this.$message.error('上传头像图片只能是 JPG 格式!');
+            // }
+            // if (!isLt2M) {
+            //   this.$message.error('上传头像图片大小不能超过 2MB!');
+            // }
+            // return isJPG && isLt2M;
+        }
+
+    },
+    mounted() {
+        this.getData();
+    }
 }
 </script>
 <style scoped>
@@ -326,27 +326,31 @@ export default {
     font-size: 18px;
     color: #20a0ff;
 }
+
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
+}
+
+.avatar-uploader .el-upload:hover {
     border-color: #20a0ff;
-  }
-  .avatar-uploader-icon {
+}
+
+.avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
     width: 178px;
     height: 178px;
     line-height: 178px;
     text-align: center;
-  }
-  .avatar {
+}
+
+.avatar {
     width: 178px;
     height: 178px;
     display: block;
-  }
+}
 </style>

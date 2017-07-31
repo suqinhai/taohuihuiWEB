@@ -39,18 +39,18 @@
                     </el-table-column>
                     <el-table-column prop="url" show-overflow-tooltip label="图标">
                         <template scope="scope">
-                             <el-tooltip placement="bottom"> 
-                                <div slot="content"><img style="max-width:300px;" :src="scope.row.url"></div> 
-                                <i class="fa fa-fw fa-picture-o bg-blue-light" style="cursor: pointer;" aria-hidden="true"></i> 
-                            </el-tooltip> 
+                            <el-tooltip placement="bottom">
+                                <div slot="content"><img style="max-width:300px;" :src="scope.row.url"></div>
+                                <i class="fa fa-fw fa-picture-o bg-blue-light" style="cursor: pointer;" aria-hidden="true"></i>
+                            </el-tooltip>
                         </template>
                     </el-table-column>
-                     <el-table-column prop="sort" show-overflow-tooltip label="排序">
+                    <el-table-column prop="sort" show-overflow-tooltip label="排序">
                     </el-table-column>
-                     <el-table-column prop="property" show-overflow-tooltip label="属性列表">
+                    <el-table-column prop="property" show-overflow-tooltip label="属性列表">
                         <template scope="scope">
                             <router-link :to="{'name':'属性列表',params:{ 'classifyId': scope.row._id }}">
-                            <i class="fa fa-align-justify" style="cursor: pointer;" aria-hidden="true"></i>
+                                <i class="fa fa-align-justify" style="cursor: pointer;" aria-hidden="true"></i>
                             </router-link>
                         </template>
                     </el-table-column>
@@ -84,14 +84,9 @@
                             <el-input v-model="form.name"></el-input>
                         </el-form-item>
                         <el-form-item prop="url" label="图标">
-                            <el-upload
-                              class="avatar-uploader"
-                              :action="interface.upload"
-                              :show-file-list="false"
-                              :on-success="handleAvatarSuccess"
-                              :before-upload="beforeAvatarUpload">
-                              <img v-if="form.url" :src="form.url" class="avatar">
-                              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            <el-upload class="avatar-uploader" :action="interface.upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                                <img v-if="form.url" :src="form.url" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
                         </el-form-item>
                         <el-form-item prop="sort" label="排序">
@@ -112,205 +107,205 @@ import NProgress from 'nprogress'
 
 export default {
     data() {
-            return {
-                tableHeight: document.documentElement.clientHeight - 220,
-                filters: {
-                    name: '',
-                },
-                interface: {
-                    upload: '/taohuihui/public/upload',
+        return {
+            tableHeight: document.documentElement.clientHeight - 220,
+            filters: {
+                name: '',
+            },
+            interface: {
+                upload: '/taohuihui/public/upload',
                     list: {
                         get: '/taohuihui/classify/get',
                         add: '/taohuihui/classify/add',
                         edit: '/taohuihui/classify/modify',
                         del: '/taohuihui/classify/del'
                     }
-                },
-                level: 0,
-                levelid: [],
-                tabledata: [],
-                pageSizes: [10, 20, 50, 100],
-                per_page: 50,
-                total: 0,
-                page: 1,
-                listLoading: false,
-                sels: [], //列表选中列
-                firstTable: true,
-                FormVisible: false, //编辑界面是否显示
-                //编辑界面数据
-                form: {
-                    'name': '', 
-                    'url': '',
-                    'sort': '', 
-                },
-                formRules: {},
-            }
-        },
-        methods: {
-            handleSizeChange(val) {
-                this.per_page = val
-                this.getData()
             },
-            handleCurrentChange(val) {
-                this.page = val;
-                this.getData();
+            level: 0,
+            levelid: [],
+            tabledata: [],
+            pageSizes: [10, 20, 50, 100],
+            per_page: 50,
+            total: 0,
+            page: 1,
+            listLoading: false,
+            sels: [], //列表选中列
+            firstTable: true,
+            FormVisible: false, //编辑界面是否显示
+            //编辑界面数据
+            form: {
+                'name': '',
+                'url': '',
+                'sort': '',
             },
-            selsChange: function(sels) {
-                this.sels = sels;
-
-            },
-            handleRowClick: function(row, event, column) {
-                this.$refs.table.toggleRowSelection(row)
-            },
-            handleSearch: function() {
-                this.getData()
-            },
-            refleshTable: function() {
-                this.level = 0
-                this.levelid = []
-                this.fid = 0
-                this.filters.name = ''
-                this.per_page = 50
-                this.page = 1;
-                this.getData()
-            },
-            //获取列表
-            getData() {
-                let para = {
-                    page: this.page,
-                    name: this.filters.name,
-                };
-                this.listLoading = true
-                this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page).then((data) => {
-                    this.tabledata = data.body.list
-                    this.total = parseInt(data.body.count)
-                    this.listLoading = false
-                });
-            },
-           
-            //显示编辑界面
-            handleEdit: function() {
-                let data = this.sels.map(item => item)[0]
-                this.formType = data._id
-                this.form._id = data._id
-                this.form.name = data.name
-                this.form.url = data.url
-                this.form.sort = parseInt(data.sort)
-                this.FormVisible = true
-            },
-            handleAdd: function() {
-                this.formType = 0
-                this.form._id = ''
-                this.form.name = ''
-                this.form.url = ''
-                this.form.sort = ''
-                this.FormVisible = true
-            },
-
-            handleDel: function() {
-                this.$confirm('确认删除选中记录吗？', '提示', {
-                    type: 'warning'
-                }).then(() => {
-                    var data = this.sels.map(item => item)
-                    var _ids = []
-                    data.forEach(function(value, key) {
-                        _ids.push(value._id)
-                    })
-                    this.listLoading = true;
-                    this.$http.post(this.interface.list.del, {
-                        _ids: _ids
-                    }).then(res => {
-                        this.listLoading = false
-                        if (res.code == 0) {
-                            this.$message({
-                                message: res.msg,
-                                type: 'error'
-                            })
-                            return false;
-                        }
-                        this.getData()
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success'
-                        });
-
-                    })
-                }).catch(() => {
-
-                });
-            },
-
-            onSubmit: function() {
-                this.form.sort = parseInt(this.form.sort)
-                this.$refs.form.validate((valid) => {
-                    if (valid) {
-                        if (this.form._id) {
-                            this.listLoading = true;
-                            this.$http.post(this.interface.list.edit, this.form).then(res => {
-                                this.listLoading = false;
-                                if (res.code == 0) {
-                                    this.$message({
-                                        message: res.msg,
-                                        type: 'error'
-                                    })
-                                    return false;
-                                }
-                                this.$message({
-                                    message: '修改成功',
-                                    type: 'success'
-                                })
-                                this.FormVisible = false;
-                                this.getData();
-                            })
-                        } else {
-                            this.listLoading = true;
-                            this.$http.post(this.interface.list.add, this.form).then(res => {
-                                this.listLoading = false;
-                                if (res.code == 0) {
-                                    this.$message({
-                                        message: res.msg,
-                                        type: 'error'
-                                    })
-                                    return false;
-                                }
-                                this.$message({
-                                    message: '新增成功',
-                                    type: 'success'
-                                })
-                                this.FormVisible = false;
-                                this.getData();
-                            })
-                        }
-                    } else {
-                        return false
-                    }
-                })
-            },
-            preView() {
-                this.firstTable = true;
-                this.FormVisible = false;
-                this.sels = []
-            },
-            handleAvatarSuccess(res, file) {
-                this.form.url = res.data.url
-            },
-            beforeAvatarUpload(file) {
-                // const isJPG = file.type === 'image/jpeg';
-                // const isLt2M = file.size / 1024 / 1024 < 2;
-
-                // if (!isJPG) {
-                //   this.$message.error('上传头像图片只能是 JPG 格式!');
-                // }
-                // if (!isLt2M) {
-                //   this.$message.error('上传头像图片大小不能超过 2MB!');
-                // }
-                // return isJPG && isLt2M;
-            }
-
-        },
-        mounted() {
-            this.getData();
+            formRules: {},
         }
+    },
+    methods: {
+        handleSizeChange(val) {
+            this.per_page = val
+            this.getData()
+        },
+        handleCurrentChange(val) {
+            this.page = val;
+            this.getData();
+        },
+        selsChange: function(sels) {
+            this.sels = sels;
+
+        },
+        handleRowClick: function(row, event, column) {
+            this.$refs.table.toggleRowSelection(row)
+        },
+        handleSearch: function() {
+            this.getData()
+        },
+        refleshTable: function() {
+            this.level = 0
+            this.levelid = []
+            this.fid = 0
+            this.filters.name = ''
+            this.per_page = 50
+            this.page = 1;
+            this.getData()
+        },
+        //获取列表
+        getData() {
+            let para = {
+                page: this.page,
+                name: this.filters.name,
+            };
+            this.listLoading = true
+            this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page).then((data) => {
+                this.tabledata = data.body.list
+                this.total = parseInt(data.body.count)
+                this.listLoading = false
+            });
+        },
+
+        //显示编辑界面
+        handleEdit: function() {
+            let data = this.sels.map(item => item)[0]
+            this.formType = data._id
+            this.form._id = data._id
+            this.form.name = data.name
+            this.form.url = data.url
+            this.form.sort = parseInt(data.sort)
+            this.FormVisible = true
+        },
+        handleAdd: function() {
+            this.formType = 0
+            this.form._id = ''
+            this.form.name = ''
+            this.form.url = ''
+            this.form.sort = ''
+            this.FormVisible = true
+        },
+
+        handleDel: function() {
+            this.$confirm('确认删除选中记录吗？', '提示', {
+                type: 'warning'
+            }).then(() => {
+                var data = this.sels.map(item => item)
+                var _ids = []
+                data.forEach(function(value, key) {
+                    _ids.push(value._id)
+                })
+                this.listLoading = true;
+                this.$http.post(this.interface.list.del, {
+                    _ids: _ids
+                }).then(res => {
+                    this.listLoading = false
+                    if (res.code == 0) {
+                        this.$message({
+                            message: res.msg,
+                            type: 'error'
+                        })
+                        return false;
+                    }
+                    this.getData()
+                    this.$message({
+                        message: '删除成功',
+                        type: 'success'
+                    });
+
+                })
+            }).catch(() => {
+
+            });
+        },
+
+        onSubmit: function() {
+            this.form.sort = parseInt(this.form.sort)
+            this.$refs.form.validate((valid) => {
+                if (valid) {
+                    if (this.form._id) {
+                        this.listLoading = true;
+                        this.$http.post(this.interface.list.edit, this.form).then(res => {
+                            this.listLoading = false;
+                            if (res.code == 0) {
+                                this.$message({
+                                    message: res.msg,
+                                    type: 'error'
+                                })
+                                return false;
+                            }
+                            this.$message({
+                                message: '修改成功',
+                                type: 'success'
+                            })
+                            this.FormVisible = false;
+                            this.getData();
+                        })
+                    } else {
+                        this.listLoading = true;
+                        this.$http.post(this.interface.list.add, this.form).then(res => {
+                            this.listLoading = false;
+                            if (res.code == 0) {
+                                this.$message({
+                                    message: res.msg,
+                                    type: 'error'
+                                })
+                                return false;
+                            }
+                            this.$message({
+                                message: '新增成功',
+                                type: 'success'
+                            })
+                            this.FormVisible = false;
+                            this.getData();
+                        })
+                    }
+                } else {
+                    return false
+                }
+            })
+        },
+        preView() {
+            this.firstTable = true;
+            this.FormVisible = false;
+            this.sels = []
+        },
+        handleAvatarSuccess(res, file) {
+            this.form.url = res.data.url
+        },
+        beforeAvatarUpload(file) {
+            // const isJPG = file.type === 'image/jpeg';
+            // const isLt2M = file.size / 1024 / 1024 < 2;
+
+            // if (!isJPG) {
+            //   this.$message.error('上传头像图片只能是 JPG 格式!');
+            // }
+            // if (!isLt2M) {
+            //   this.$message.error('上传头像图片大小不能超过 2MB!');
+            // }
+            // return isJPG && isLt2M;
+        }
+
+    },
+    mounted() {
+        this.getData();
+    }
 }
 </script>
 <style scoped>
@@ -323,27 +318,31 @@ export default {
     font-size: 18px;
     color: #20a0ff;
 }
+
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
+}
+
+.avatar-uploader .el-upload:hover {
     border-color: #20a0ff;
-  }
-  .avatar-uploader-icon {
+}
+
+.avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
     width: 178px;
     height: 178px;
     line-height: 178px;
     text-align: center;
-  }
-  .avatar {
+}
+
+.avatar {
     width: 178px;
     height: 178px;
     display: block;
-  }
+}
 </style>

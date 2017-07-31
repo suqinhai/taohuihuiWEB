@@ -64,4 +64,7 @@ body {
 .fade-leave-active {
 	opacity: 0;
 }
+.fa{
+	color: #1f2d3d;
+}
 </style>
