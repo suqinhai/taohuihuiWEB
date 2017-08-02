@@ -15,9 +15,18 @@ const poster = resolve => require(['./views/index/poster.vue'], resolve)
 const notOnline = resolve => require(['./views/goods/notOnline.vue'], resolve)
 const online = resolve => require(['./views/goods/online.vue'], resolve)
 
+
 //会员列表
-const memberlist = resolve => require(['./views/memberManage/memberlist.vue'], resolve)
+const memberList = resolve => require(['./views/memberManage/memberList.vue'], resolve)
+
+// 购物车管理
 const shopCart = resolve => require(['./views/memberManage/shopCart.vue'], resolve)
+
+// 收藏历史
+const collectList = resolve => require(['./views/memberManage/collectList.vue'], resolve)
+
+// 朋友圈
+const circle = resolve => require(['./views/memberManage/circle.vue'], resolve)
 
 //分类管理
 const classify = resolve => require(['./views/classifyManage/classify.vue'], resolve)
@@ -43,7 +52,7 @@ let routes = [
         path: '/',
         component: Home,
         name: '首页配置',
-        iconCls: 'fa fa-address-card',
+        iconCls: 'fa fa-address-card-o',
         leaf: false,//有多个节点
         children: [
             { path: '/index/topNav', component: topNav, name: '头部菜单' },
@@ -78,11 +87,33 @@ let routes = [
     {
         path: '/',
         component: Home,
+        name: '朋友圈',
+        iconCls: 'fa fa-pie-chart',
+        leaf: false,//有多个节点
+        children: [
+             { path: '/memberManage/circle', component: circle, name: '会员收藏' },
+        ]
+    },
+
+    {
+        path: '/',
+        component: Home,
+        name: '收藏历史',
+        iconCls: 'fa fa-sticky-note-o',
+        leaf: false,//有多个节点
+        children: [
+             { path: '/memberManage/collectList', component: collectList, name: '会员收藏' },
+        ]
+    },
+
+    {
+        path: '/',
+        component: Home,
         name: '会员管理',
         iconCls: 'fa fa-user-circle',
         leaf: false,//有多个节点
         children: [
-            { path: '/memberManage/memberlist', component: memberlist, name: '会员列表' },
+            { path: '/memberManage/memberList', component: memberList, name: '会员列表' },
         ]
     },
 

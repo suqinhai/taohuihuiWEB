@@ -64,7 +64,7 @@ body {
 .fade-leave-active {
 	opacity: 0;
 }
-.fa{
+.el-table__row .fa{
 	color: #1f2d3d;
 }
 </style>
