@@ -45,6 +45,14 @@
                             </el-tooltip>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="actionType" show-overflow-tooltip label="跳转类型">
+                        <template scope="scope">
+                            <span v-if='scope.row.actionType  == "index"'>首页</span>
+                            <span v-if='scope.row.actionType  == "classify"'>分类</span>
+                            <span v-if='scope.row.actionType  == "circle"'>朋友圈</span>
+                            <span v-if='scope.row.actionType  == "account"'>我的账户</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="sort" show-overflow-tooltip label="排序">
                     </el-table-column>
                     <el-table-column prop="createTime" width="170" show-overflow-tooltip label="创建时间">
@@ -84,6 +92,14 @@
                         </el-form-item>
                         <el-form-item prop="sort" label="排序">
                             <el-input v-model="form.sort" type="number"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="actionType" label="跳转类型">
+                            <el-radio-group v-model="form.actionType">
+                                <el-radio class="radio" label="index">首页</el-radio>
+                                <el-radio class="radio" label="classify">分类</el-radio>
+                                <el-radio class="radio" label="circle">朋友圈</el-radio>
+                                <el-radio class="radio" label="account">我的账户</el-radio>
+                            </el-radio-group>
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click.native.prevent="onSubmit">提交</el-button>
@@ -130,6 +146,7 @@ export default {
                 'name': '',
                 'url': '',
                 'sort': '',
+                'actionType':''
             },
             formRules: {},
         }
@@ -184,6 +201,7 @@ export default {
             this.form._id = data._id
             this.form.name = data.name
             this.form.url = data.url
+            this.form.actionType = data.actionType
             this.form.sort = parseInt(data.sort)
             this.FormVisible = true
         },
@@ -192,6 +210,7 @@ export default {
             this.form._id = ''
             this.form.name = ''
             this.form.url = ''
+            this.form.actionType = 'index'
             this.form.sort = ''
             this.FormVisible = true
         },
