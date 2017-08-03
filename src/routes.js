@@ -32,6 +32,8 @@ const circle = resolve => require(['./views/memberManage/circle.vue'], resolve)
 const classify = resolve => require(['./views/classifyManage/classify.vue'], resolve)
 const property = resolve => require(['./views/classifyManage/property.vue'], resolve)
 
+//第三方类目
+const thirdProperty = resolve => require(['./views/thirdProperty/thirdProperty.vue'], resolve)
 
 let routes = [
 
@@ -70,6 +72,17 @@ let routes = [
         children: [
             { path: '/classifyManage/classify', component: classify, name: '分类列表' },
             { path: '/classifyManage/property/:classifyId', component: property, name: '属性列表', hidden:true },
+        ]
+    },
+
+    {
+        path: '/',
+        component: Home,
+        name: '第三方类目',
+        iconCls: 'fa fa-bar-chart',
+        leaf: false,//有多个节点
+        children: [
+            { path: '/thirdProperty/thirdProperty', component: thirdProperty, name: '第三方类目' },
         ]
     },
 

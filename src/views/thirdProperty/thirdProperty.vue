@@ -9,6 +9,9 @@
                             <strong class="title">{{$route.name}}</strong>
                         </el-form-item>
                         <el-form-item>
+                            <el-button size="small" type="primary" @click="$router.go(-1)">返回</el-button>
+                        </el-form-item>
+                        <el-form-item>
                             <el-button size="small" type="primary" @click="refleshTable">刷新</el-button>
                         </el-form-item>
                         <el-form-item>
@@ -19,12 +22,6 @@
                         </el-form-item>
                         <el-form-item>
                             <el-button size="small" type="danger" @click="handleDel" :disabled="this.sels.length == 0">删除</el-button>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button size="small" type="primary" @click="handleOnline" :disabled="this.sels.length == 0">上线</el-button>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button size="small" type="primary" @click="handleDownline" :disabled="this.sels.length == 0">下线</el-button>
                         </el-form-item>
                     </el-form>
                 </el-col>
@@ -39,7 +36,7 @@
                 <el-table :data="tabledata" v-loading="listLoading" @selection-change="selsChange" style="width: 100%;" :max-height="tableHeight" ref="table" @row-click="handleRowClick">
                     <el-table-column type="selection" width="55">
                     </el-table-column>
-                    <el-table-column prop="_id" show-overflow-tooltip label="_id" width="55">
+                    <el-table-column prop="_id" show-overflow-tooltip label="_id">
                     </el-table-column>
                     <el-table-column prop="name" show-overflow-tooltip label="名称">
                     </el-table-column>
@@ -52,24 +49,6 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="sort" show-overflow-tooltip label="排序">
-                    </el-table-column>
-                    <el-table-column prop="thirdPropertyNames" show-overflow-tooltip label="第三方类目">
-                        <template scope="scope">
-                            {{ scope.row.thirdPropertyNames.join(',')}}
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="publish" show-overflow-tooltip label="状态">
-                        <template scope="scope">
-                            <span v-if="scope.row.publish == 1">上线</span>
-                            <span v-if="scope.row.publish == 0">下线</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="property" show-overflow-tooltip label="属性列表">
-                        <template scope="scope">
-                            <router-link :to="{'name':'属性列表',params:{ 'classifyId': scope.row._id }}">
-                                <i class="fa fa-align-justify" style="cursor: pointer;" aria-hidden="true"></i>
-                            </router-link>
-                        </template>
                     </el-table-column>
                     <el-table-column prop="createTime" width="170" show-overflow-tooltip label="创建时间">
                     </el-table-column>
@@ -99,12 +78,6 @@
                     <el-form ref="form" :model="form" :rules="formRules" label-width="180px">
                         <el-form-item prop="name" label="名称">
                             <el-input v-model="form.name"></el-input>
-                        </el-form-item>
-                        <el-form-item label="第三方类目">
-                            <el-select v-model="form.thirdPropertyIds" multiple filterable placeholder="请选择">
-                                <el-option v-for="item in thirdPropertyArr" :label="item.name" :value="item._id">
-                                </el-option>
-                            </el-select>
                         </el-form-item>
                         <el-form-item prop="url" label="图标">
                             <el-upload class="avatar-uploader" :action="interface.upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
@@ -138,15 +111,10 @@ export default {
             interface: {
                 upload: '/taohuihui/public/upload',
                     list: {
-                        get: '/taohuihui/classify/get',
-                        add: '/taohuihui/classify/add',
-                        edit: '/taohuihui/classify/modify',
-                        del: '/taohuihui/classify/del',
-                        upClassify: '/taohuihui/classify/upClassify',
-                        downClassify: '/taohuihui/classify/downClassify',
-                    },
-                    getThirdPropertySelect: {
-                        get: '/taohuihui/classify/getThirdPropertySelect'
+                        get: '/taohuihui/classify/getThirdProperty',
+                        add: '/taohuihui/classify/addThirdProperty',
+                        edit: '/taohuihui/classify/modifyThirdProperty',
+                        del: '/taohuihui/classify/delThirdProperty'
                     },
             },
             level: 0,
@@ -165,10 +133,8 @@ export default {
                 'name': '',
                 'url': '',
                 'sort': '',
-                'thirdPropertyIds': ''
             },
             formRules: {},
-            thirdPropertyArr: []
         }
     },
     methods: {
@@ -206,7 +172,7 @@ export default {
                 name: this.filters.name,
             };
             this.listLoading = true
-            this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page).then((data) => {
+            this.$http.get(this.interface.list.get + '?page=' + para.page + '&name=' + para.name + '&pageSize=' + this.per_page + '&classifyId=' + this.$route.params.classifyId).then((data) => {
                 this.tabledata = data.body.list
                 this.total = parseInt(data.body.count)
                 this.listLoading = false
@@ -220,17 +186,16 @@ export default {
             this.form._id = data._id
             this.form.name = data.name
             this.form.url = data.url
-            this.form.thirdPropertyIds = data.thirdPropertyIds
             this.form.sort = parseInt(data.sort)
             this.FormVisible = true
         },
         handleAdd: function() {
             this.formType = 0
+            this.form.classifyId = this.$route.params.classifyId;
             this.form._id = ''
             this.form.name = ''
             this.form.url = ''
             this.form.sort = ''
-            this.form.thirdPropertyIds = ''
             this.FormVisible = true
         },
 
@@ -313,70 +278,6 @@ export default {
                 }
             })
         },
-        handleOnline: function() {
-            this.$confirm('确认上线选中记录吗？', '提示', {
-                type: 'warning'
-            }).then(() => {
-                var data = this.sels.map(item => item)
-                var _ids = []
-                data.forEach(function(value, key) {
-                    _ids.push(value._id)
-                })
-                this.listLoading = true;
-                this.$http.post(this.interface.list.upClassify, {
-                    _ids: _ids,
-                }).then(res => {
-                    this.listLoading = false
-                    if (res.code == 0) {
-                        this.$message({
-                            message: res.msg,
-                            type: 'error'
-                        })
-                        return false;
-                    }
-                    this.getData()
-                    this.$message({
-                        message: '上线成功',
-                        type: 'success'
-                    });
-
-                })
-            }).catch(() => {
-
-            });
-        },
-        handleDownline: function() {
-            this.$confirm('确认下线选中记录吗？', '提示', {
-                type: 'warning'
-            }).then(() => {
-                var data = this.sels.map(item => item)
-                var _ids = []
-                data.forEach(function(value, key) {
-                    _ids.push(value._id)
-                })
-                this.listLoading = true;
-                this.$http.post(this.interface.list.downClassify, {
-                    _ids: _ids,
-                }).then(res => {
-                    this.listLoading = false
-                    if (res.code == 0) {
-                        this.$message({
-                            message: res.msg,
-                            type: 'error'
-                        })
-                        return false;
-                    }
-                    this.getData()
-                    this.$message({
-                        message: '下线成功',
-                        type: 'success'
-                    });
-
-                })
-            }).catch(() => {
-
-            });
-        },
         preView() {
             this.firstTable = true;
             this.FormVisible = false;
@@ -396,18 +297,11 @@ export default {
             //   this.$message.error('上传头像图片大小不能超过 2MB!');
             // }
             // return isJPG && isLt2M;
-        },
-        getThirdPropertySelect() {
-            this.$http.get(this.interface.getThirdPropertySelect.get).then(res => {
-
-                this.thirdPropertyArr = res.body.list;
-            })
-        },
+        }
 
     },
     mounted() {
         this.getData();
-        this.getThirdPropertySelect();
     }
 }
 </script>
