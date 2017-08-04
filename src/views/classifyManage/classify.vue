@@ -39,7 +39,7 @@
                 <el-table :data="tabledata" v-loading="listLoading" @selection-change="selsChange" style="width: 100%;" :max-height="tableHeight" ref="table" @row-click="handleRowClick">
                     <el-table-column type="selection" width="55">
                     </el-table-column>
-                    <el-table-column prop="_id" show-overflow-tooltip label="_id" width="55">
+                    <el-table-column prop="_id" show-overflow-tooltip label="_id" width="60">
                     </el-table-column>
                     <el-table-column prop="name" show-overflow-tooltip label="名称">
                     </el-table-column>
@@ -55,7 +55,7 @@
                     </el-table-column>
                     <el-table-column prop="thirdPropertyNames" show-overflow-tooltip label="第三方类目">
                         <template scope="scope">
-                            {{ scope.row.thirdPropertyNames.join(',')}}
+                            {{ scope.row.thirdPropertyNames ? scope.row.thirdPropertyNames.join(',') : ''}}
                         </template>
                     </el-table-column>
                     <el-table-column prop="publish" show-overflow-tooltip label="状态">
@@ -216,16 +216,18 @@ export default {
         //显示编辑界面
         handleEdit: function() {
             let data = this.sels.map(item => item)[0]
+            this.getThirdPropertySelect(data._id);
             this.formType = data._id
             this.form._id = data._id
             this.form.name = data.name
             this.form.url = data.url
-            this.form.thirdPropertyIds = data.thirdPropertyIds
+            this.form.thirdPropertyIds = data.thirdPropertyIds ? data.thirdPropertyIds : ''
             this.form.sort = parseInt(data.sort)
             this.FormVisible = true
         },
         handleAdd: function() {
             this.formType = 0
+            this.getThirdPropertySelect(data._id);
             this.form._id = ''
             this.form.name = ''
             this.form.url = ''
@@ -397,8 +399,8 @@ export default {
             // }
             // return isJPG && isLt2M;
         },
-        getThirdPropertySelect() {
-            this.$http.get(this.interface.getThirdPropertySelect.get).then(res => {
+        getThirdPropertySelect(_id) {
+            this.$http.get(this.interface.getThirdPropertySelect.get + '?classifyId=' + _id).then(res => {
 
                 this.thirdPropertyArr = res.body.list;
             })
@@ -407,7 +409,7 @@ export default {
     },
     mounted() {
         this.getData();
-        this.getThirdPropertySelect();
+       
     }
 }
 </script>
