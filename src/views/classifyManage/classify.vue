@@ -127,7 +127,6 @@
 </template>
 <script>
 import NProgress from 'nprogress'
-
 export default {
     data() {
         return {
@@ -182,7 +181,6 @@ export default {
         },
         selsChange: function(sels) {
             this.sels = sels;
-
         },
         handleRowClick: function(row, event, column) {
             this.$refs.table.toggleRowSelection(row)
@@ -212,7 +210,6 @@ export default {
                 this.listLoading = false
             });
         },
-
         //显示编辑界面
         handleEdit: function() {
             let data = this.sels.map(item => item)[0]
@@ -227,7 +224,7 @@ export default {
         },
         handleAdd: function() {
             this.formType = 0
-            this.getThirdPropertySelect(data._id);
+            this.getThirdPropertySelect('');
             this.form._id = ''
             this.form.name = ''
             this.form.url = ''
@@ -235,7 +232,6 @@ export default {
             this.form.thirdPropertyIds = ''
             this.FormVisible = true
         },
-
         handleDel: function() {
             this.$confirm('确认删除选中记录吗？', '提示', {
                 type: 'warning'
@@ -262,13 +258,10 @@ export default {
                         message: '删除成功',
                         type: 'success'
                     });
-
                 })
             }).catch(() => {
-
             });
         },
-
         onSubmit: function() {
             this.form.sort = parseInt(this.form.sort)
             this.$refs.form.validate((valid) => {
@@ -341,10 +334,8 @@ export default {
                         message: '上线成功',
                         type: 'success'
                     });
-
                 })
             }).catch(() => {
-
             });
         },
         handleDownline: function() {
@@ -373,10 +364,8 @@ export default {
                         message: '下线成功',
                         type: 'success'
                     });
-
                 })
             }).catch(() => {
-
             });
         },
         preView() {
@@ -390,7 +379,6 @@ export default {
         beforeAvatarUpload(file) {
             // const isJPG = file.type === 'image/jpeg';
             // const isLt2M = file.size / 1024 / 1024 < 2;
-
             // if (!isJPG) {
             //   this.$message.error('上传头像图片只能是 JPG 格式!');
             // }
@@ -401,11 +389,9 @@ export default {
         },
         getThirdPropertySelect(_id) {
             this.$http.get(this.interface.getThirdPropertySelect.get + '?classifyId=' + _id).then(res => {
-
                 this.thirdPropertyArr = res.body.list;
             })
         },
-
     },
     mounted() {
         this.getData();
@@ -418,12 +404,10 @@ export default {
     margin-top: 50px;
     width: 500px;
 }
-
 .title {
     font-size: 18px;
     color: #20a0ff;
 }
-
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
@@ -431,11 +415,9 @@ export default {
     position: relative;
     overflow: hidden;
 }
-
 .avatar-uploader .el-upload:hover {
     border-color: #20a0ff;
 }
-
 .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
@@ -444,7 +426,6 @@ export default {
     line-height: 178px;
     text-align: center;
 }
-
 .avatar {
     width: 178px;
     height: 178px;

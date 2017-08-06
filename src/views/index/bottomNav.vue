@@ -20,6 +20,12 @@
                         <el-form-item>
                             <el-button size="small" type="danger" @click="handleDel" :disabled="this.sels.length == 0">删除</el-button>
                         </el-form-item>
+                        <el-form-item>
+                            <el-button size="small" type="primary" @click="handleOnline" :disabled="this.sels.length == 0">上线</el-button>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button size="small" type="primary" @click="handleDownline" :disabled="this.sels.length == 0">下线</el-button>
+                        </el-form-item>
                     </el-form>
                 </el-col>
                 <el-col :span="5" class="toolbar" style="padding-bottom: 0px;">
@@ -54,6 +60,12 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="sort" show-overflow-tooltip label="排序">
+                    </el-table-column>
+                    <el-table-column prop="publish" show-overflow-tooltip label="状态">
+                        <template scope="scope">
+                            <span v-if="scope.row.publish == 1">上线</span>
+                            <span v-if="scope.row.publish == 0">下线</span>
+                        </template>
                     </el-table-column>
                     <el-table-column prop="createTime" width="170" show-overflow-tooltip label="创建时间">
                     </el-table-column>
@@ -127,7 +139,9 @@ export default {
                         get: '/taohuihui/bottomMenu/get',
                         add: '/taohuihui/bottomMenu/add',
                         edit: '/taohuihui/bottomMenu/modify',
-                        del: '/taohuihui/bottomMenu/del'
+                        del: '/taohuihui/bottomMenu/del',
+                        upBottomMenu:'/taohuihui/bottomMenu/upBottomMenu',
+                        downBottomMenu:'/taohuihui/bottomMenu/downBottomMenu'
                     },
             },
             level: 0,
@@ -239,6 +253,71 @@ export default {
                     this.getData()
                     this.$message({
                         message: '删除成功',
+                        type: 'success'
+                    });
+
+                })
+            }).catch(() => {
+
+            });
+        },
+
+        handleOnline: function() {
+            this.$confirm('确认上线选中记录吗？', '提示', {
+                type: 'warning'
+            }).then(() => {
+                var data = this.sels.map(item => item)
+                var _ids = []
+                data.forEach(function(value, key) {
+                    _ids.push(value._id)
+                })
+                this.listLoading = true;
+                this.$http.post(this.interface.list.upBottomMenu, {
+                    _ids: _ids,
+                }).then(res => {
+                    this.listLoading = false
+                    if (res.code == 0) {
+                        this.$message({
+                            message: res.msg,
+                            type: 'error'
+                        })
+                        return false;
+                    }
+                    this.getData()
+                    this.$message({
+                        message: '上线成功',
+                        type: 'success'
+                    });
+
+                })
+            }).catch(() => {
+
+            });
+        },
+        handleDownline: function() {
+            this.$confirm('确认下线选中记录吗？', '提示', {
+                type: 'warning'
+            }).then(() => {
+                var data = this.sels.map(item => item)
+                var _ids = []
+                data.forEach(function(value, key) {
+                    _ids.push(value._id)
+                })
+                this.listLoading = true;
+                this.$http.post(this.interface.list.downBottomMenu, {
+                    _ids: _ids,
+                }).then(res => {
+                    this.listLoading = false
+                    if (res.code == 0) {
+                        this.$message({
+                            message: res.msg,
+                            type: 'error'
+                        })
+                        return false;
+                    }
+                    this.getData()
+                    this.$message({
+                        message: '下线成功',
                         type: 'success'
                     });
 

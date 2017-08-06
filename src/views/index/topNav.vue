@@ -20,6 +20,12 @@
                         <el-form-item>
                             <el-button size="small" type="danger" @click="handleDel" :disabled="this.sels.length == 0">删除</el-button>
                         </el-form-item>
+                        <el-form-item>
+                            <el-button size="small" type="primary" @click="handleOnline" :disabled="this.sels.length == 0">上线</el-button>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button size="small" type="primary" @click="handleDownline" :disabled="this.sels.length == 0">下线</el-button>
+                        </el-form-item>
                     </el-form>
                 </el-col>
                 <el-col :span="5" class="toolbar" style="padding-bottom: 0px;">
@@ -46,6 +52,24 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="sort" show-overflow-tooltip label="排序">
+                    </el-table-column>
+                    <el-table-column prop="actionType" show-overflow-tooltip label="跳转类型">
+                         <template scope="scope">
+                            <span v-if='scope.row.actionType  == "popular"'>超级人气榜</span>
+                            <span v-if='scope.row.actionType  == "taoSnap"'>淘抢购</span>
+                            <span v-if='scope.row.actionType  == "tmall"'>天猫商品</span>
+                            <span v-if='scope.row.actionType  == "special"'>天天特价</span>
+                            <span v-if='scope.row.actionType  == "brand"'>品牌直购</span>
+                            <span v-if='scope.row.actionType  == "goldSellers"'>金牌卖家</span>
+                            <span v-if='scope.row.actionType  == "overseas"'>海淘</span>
+                            <span v-if='scope.row.actionType  == "cheap"'>聚划算</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="publish" show-overflow-tooltip label="状态">
+                        <template scope="scope">
+                            <span v-if="scope.row.publish == 1">上线</span>
+                            <span v-if="scope.row.publish == 0">下线</span>
+                        </template>
                     </el-table-column>
                     <el-table-column width="170" show-overflow-tooltip prop="createTime" label="创建时间">
                     </el-table-column>
@@ -82,6 +106,18 @@
                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
                         </el-form-item>
+                        <el-form-item prop="actionType" label="跳转类型">
+                            <el-radio-group v-model="form.actionType">
+                                <el-radio class="radio" label="popular">超级人气榜</el-radio>
+                                <el-radio class="radio" label="taoSnap">淘抢购</el-radio>
+                                <el-radio class="radio" label="tmall">天猫商品</el-radio>
+                                <el-radio class="radio" label="special">天天特价</el-radio>
+                                <el-radio class="radio" label="brand">品牌直购</el-radio>
+                                <el-radio class="radio" label="goldSellers">金牌卖家</el-radio>
+                                <el-radio class="radio" label="overseas">海淘</el-radio>
+                                <el-radio class="radio" label="cheap">聚划算</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
                         <el-form-item prop="sort" label="排序">
                             <el-input v-model="form.sort" type="number"></el-input>
                         </el-form-item>
@@ -111,7 +147,12 @@ export default {
                         get: '/taohuihui/nav/get',
                         add: '/taohuihui/nav/add',
                         edit: '/taohuihui/nav/modify',
-                        del: '/taohuihui/nav/del'
+                        del: '/taohuihui/nav/del',
+                        upNav:'/taohuihui/nav/upNav',
+                        downNav:'/taohuihui/nav/downNav'
+                    },
+                    getThirdPropertySelect: {
+                        get: '/taohuihui/classify/getThirdPropertySelect'
                     },
             },
             level: 0,
@@ -130,6 +171,7 @@ export default {
                 'name': '',
                 'sort': '',
                 'url': '',
+                'actionType': ''
             },
             formRules: {},
         }
@@ -184,6 +226,7 @@ export default {
             this.form._id = data._id
             this.form.name = data.name
             this.form.url = data.url
+            this.form.actionType = data.actionType ? data.actionType : ''
             this.form.sort = parseInt(data.sort)
             this.FormVisible = true
         },
@@ -193,6 +236,7 @@ export default {
             this.form.name = ''
             this.form.url = ''
             this.form.sort = ''
+            this.form.actionType = ''
             this.FormVisible = true
         },
 
@@ -220,6 +264,71 @@ export default {
                     this.getData()
                     this.$message({
                         message: '删除成功',
+                        type: 'success'
+                    });
+
+                })
+            }).catch(() => {
+
+            });
+        },
+
+         handleOnline: function() {
+            this.$confirm('确认上线选中记录吗？', '提示', {
+                type: 'warning'
+            }).then(() => {
+                var data = this.sels.map(item => item)
+                var _ids = []
+                data.forEach(function(value, key) {
+                    _ids.push(value._id)
+                })
+                this.listLoading = true;
+                this.$http.post(this.interface.list.upNav, {
+                    _ids: _ids,
+                }).then(res => {
+                    this.listLoading = false
+                    if (res.code == 0) {
+                        this.$message({
+                            message: res.msg,
+                            type: 'error'
+                        })
+                        return false;
+                    }
+                    this.getData()
+                    this.$message({
+                        message: '上线成功',
+                        type: 'success'
+                    });
+
+                })
+            }).catch(() => {
+
+            });
+        },
+        handleDownline: function() {
+            this.$confirm('确认下线选中记录吗？', '提示', {
+                type: 'warning'
+            }).then(() => {
+                var data = this.sels.map(item => item)
+                var _ids = []
+                data.forEach(function(value, key) {
+                    _ids.push(value._id)
+                })
+                this.listLoading = true;
+                this.$http.post(this.interface.list.downNav, {
+                    _ids: _ids,
+                }).then(res => {
+                    this.listLoading = false
+                    if (res.code == 0) {
+                        this.$message({
+                            message: res.msg,
+                            type: 'error'
+                        })
+                        return false;
+                    }
+                    this.getData()
+                    this.$message({
+                        message: '下线成功',
                         type: 'success'
                     });
 
@@ -294,7 +403,7 @@ export default {
             //   this.$message.error('上传头像图片大小不能超过 2MB!');
             // }
             // return isJPG && isLt2M;
-        }
+        },
 
     },
     mounted() {
@@ -338,5 +447,12 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
+}
+.el-radio{
+    width: 105px;
+    margin-bottom: 10px;
+}
+.el-radio+.el-radio{
+        margin-left: 0px;
 }
 </style>

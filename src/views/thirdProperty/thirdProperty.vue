@@ -9,9 +9,6 @@
                             <strong class="title">{{$route.name}}</strong>
                         </el-form-item>
                         <el-form-item>
-                            <el-button size="small" type="primary" @click="$router.go(-1)">返回</el-button>
-                        </el-form-item>
-                        <el-form-item>
                             <el-button size="small" type="primary" @click="refleshTable">刷新</el-button>
                         </el-form-item>
                         <el-form-item>
