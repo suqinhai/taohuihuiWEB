@@ -54,16 +54,6 @@
                     <el-table-column prop="sort" show-overflow-tooltip label="排序">
                     </el-table-column>
                     <el-table-column prop="actionType" show-overflow-tooltip label="跳转类型">
-                         <template scope="scope">
-                            <span v-if='scope.row.actionType  == "popular"'>超级人气榜</span>
-                            <span v-if='scope.row.actionType  == "taoSnap"'>淘抢购</span>
-                            <span v-if='scope.row.actionType  == "tmall"'>天猫商品</span>
-                            <span v-if='scope.row.actionType  == "special"'>天天特价</span>
-                            <span v-if='scope.row.actionType  == "brand"'>品牌直购</span>
-                            <span v-if='scope.row.actionType  == "goldSellers"'>金牌卖家</span>
-                            <span v-if='scope.row.actionType  == "overseas"'>海淘</span>
-                            <span v-if='scope.row.actionType  == "cheap"'>聚划算</span>
-                        </template>
                     </el-table-column>
                     <el-table-column prop="publish" show-overflow-tooltip label="状态">
                         <template scope="scope">
@@ -106,14 +96,13 @@
                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
                         </el-form-item>
-                        <el-form-item prop="actionType" label="跳转类型">
-                            <el-radio-group v-model="form.actionType">
-                                <el-radio class="radio" label="brand">品牌直销</el-radio>
-                                <el-radio class="radio" label="popular">超级人气榜</el-radio>
-                                <el-radio class="radio" label="goldSellers">金牌卖家</el-radio>
-                                <el-radio class="radio" label="goldSellers" v-for="item in items">金牌卖家</el-radio>
-                            </el-radio-group>
+                        <el-form-item label="跳转类型" prop="actionType">
+                            <el-select v-model="form.actionType" multiple filterable placeholder="请选择">
+                                <el-option v-for="item in activityActionTypeofArr" :label="item.promoType" :value="item.promoType">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
+
                         <el-form-item prop="sort" label="排序">
                             <el-input v-model="form.sort" type="number"></el-input>
                         </el-form-item>
@@ -170,6 +159,7 @@ export default {
                 'actionType': ''
             },
             formRules: {},
+            activityActionTypeofArr:[]
         }
     },
     methods: {
@@ -402,13 +392,14 @@ export default {
         },
         activityActionTypeof() {
             this.$http.get(this.interface.activityActionTypeof.get).then(res => {
-                this.activityActionTypeof = res.body.list;
+                this.activityActionTypeofArr = res.body.list;
             })
         },
 
     },
     mounted() {
         this.getData();
+        this.activityActionTypeof();
     }
 }
 </script>
