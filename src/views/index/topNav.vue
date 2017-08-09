@@ -108,14 +108,10 @@
                         </el-form-item>
                         <el-form-item prop="actionType" label="跳转类型">
                             <el-radio-group v-model="form.actionType">
+                                <el-radio class="radio" label="brand">品牌直销</el-radio>
                                 <el-radio class="radio" label="popular">超级人气榜</el-radio>
-                                <el-radio class="radio" label="taoSnap">淘抢购</el-radio>
-                                <el-radio class="radio" label="tmall">天猫商品</el-radio>
-                                <el-radio class="radio" label="special">天天特价</el-radio>
-                                <el-radio class="radio" label="brand">品牌直购</el-radio>
                                 <el-radio class="radio" label="goldSellers">金牌卖家</el-radio>
-                                <el-radio class="radio" label="overseas">海淘</el-radio>
-                                <el-radio class="radio" label="cheap">聚划算</el-radio>
+                                <el-radio class="radio" label="goldSellers" v-for="item in items">金牌卖家</el-radio>
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item prop="sort" label="排序">
@@ -151,8 +147,8 @@ export default {
                         upNav:'/taohuihui/nav/upNav',
                         downNav:'/taohuihui/nav/downNav'
                     },
-                    getThirdPropertySelect: {
-                        get: '/taohuihui/classify/getThirdPropertySelect'
+                    activityActionTypeof: {
+                        get: '/taohuihui/nav/activityActionTypeof'
                     },
             },
             level: 0,
@@ -403,6 +399,11 @@ export default {
             //   this.$message.error('上传头像图片大小不能超过 2MB!');
             // }
             // return isJPG && isLt2M;
+        },
+        activityActionTypeof() {
+            this.$http.get(this.interface.activityActionTypeof.get).then(res => {
+                this.activityActionTypeof = res.body.list;
+            })
         },
 
     },
