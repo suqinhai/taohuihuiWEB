@@ -97,7 +97,7 @@
                             </el-upload>
                         </el-form-item>
                         <el-form-item label="跳转类型" prop="actionType">
-                            <el-select v-model="form.actionType" multiple filterable placeholder="请选择">
+                            <el-select v-model="form.actionType" filterable placeholder="请选择">
                                 <el-option v-for="item in activityActionTypeofArr" :label="item.promoType" :value="item.promoType">
                                 </el-option>
                             </el-select>
